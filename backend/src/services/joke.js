@@ -43,6 +43,8 @@ export async function voteForJoke(id, emoji) {
   }
 
   await joke.save();
+}
 
-  return joke;
+export async function deleteJoke(id) {
+  await Joke.findByIdAndDelete(id);
 }

@@ -3,6 +3,7 @@ import {
   getRandomJoke,
   voteForJoke,
   jokeExistsById,
+  deleteJoke,
 } from "../services/joke.js";
 
 const jokeRouter = Router();
@@ -26,11 +27,27 @@ jokeRouter.post("/api/joke/:id", async (req, res) => {
   }
 
   try {
-    const joke = await voteForJoke(id, emoji);
+    await voteForJoke(id, emoji);
 
-    res.status(200).json(joke);
+    res.status(201).json(joke);
   } catch (err) {
     console.log(err.message);
+    res.status(400).send(err.message);
+  }
+});
+
+jokeRouter.delete("/api/joke/:id", async (req, res) => {
+  const { id } = req.params;
+  const jokeExist = await jokeExistsById(id);
+
+  if (!jokeExist) {
+    res.status("404").send("Joke doesn't exist");
+  }
+
+  try {
+    await deleteJoke(id);
+    res.status(204).end();
+  } catch (err) {
     res.status(400).send(err.message);
   }
 });
