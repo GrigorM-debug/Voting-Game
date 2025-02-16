@@ -48,3 +48,19 @@ export async function voteForJoke(id, emoji) {
 export async function deleteJoke(id) {
   await Joke.findByIdAndDelete(id);
 }
+
+export async function updateJoke(id, question, answer) {
+  if (!question) {
+    throw new Error("Question is required");
+  }
+
+  if (!answer) {
+    throw new Error("Answer is required");
+  }
+
+  const options = { new: true };
+
+  const joke = await Joke.findByIdAndUpdate(id, { question, answer }, options);
+
+  return joke;
+}
