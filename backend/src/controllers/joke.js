@@ -31,7 +31,7 @@ jokeRouter.post("/api/joke/:id", async (req, res) => {
     res.status(200).json(joke);
   } catch (err) {
     console.log(err.message);
-    res.status(404).send(err.message);
+    res.status(400).send(err.message);
   }
 });
 

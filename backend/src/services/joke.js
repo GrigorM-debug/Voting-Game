@@ -17,6 +17,10 @@ export async function jokeExistsById(id) {
 }
 
 export async function voteForJoke(id, emoji) {
+  if (!emoji) {
+    throw new Error("Emoji is required for voting");
+  }
+
   const joke = await Joke.findById(id);
 
   const isEmojiAvaiable = joke.availableVotes.find((av) => av === emoji);
