@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import seedJokes from "../src/services/jokesSeeder.js";
 
 export default async function mongoDbConfig() {
   const connectionString = process.env.MONGO_DB_CONNECTION_STRING;
@@ -7,4 +8,6 @@ export default async function mongoDbConfig() {
     .connect(connectionString)
     .then(() => console.log("MongoDb connected"))
     .catch((err) => console.log(err));
+
+  await seedJokes();
 }
