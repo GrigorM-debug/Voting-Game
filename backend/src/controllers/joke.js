@@ -24,7 +24,7 @@ jokeRouter.post("/api/joke/:id", async (req, res) => {
   const jokeExist = await jokeExistsById(id);
 
   if (!jokeExist) {
-    res.status(404).send("Joke doesn't exist");
+    res.status(404).send({ error: "Joke doesn't exist" });
   }
 
   try {
@@ -33,7 +33,7 @@ jokeRouter.post("/api/joke/:id", async (req, res) => {
     res.status(201).json(joke);
   } catch (err) {
     console.log(err.message);
-    res.status(400).send(err.message);
+    res.status(400).send({ error: err.message });
   }
 });
 
@@ -43,14 +43,14 @@ jokeRouter.delete("/api/joke/:id", async (req, res) => {
   const jokeExist = await jokeExistsById(id);
 
   if (!jokeExist) {
-    res.status("404").send("Joke doesn't exist");
+    res.status("404").send({ error: "Joke doesn't exist" });
   }
 
   try {
     await deleteJoke(id);
     res.status(204).end();
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ error: err.message });
   }
 });
 
@@ -62,7 +62,7 @@ jokeRouter.put("/api/joke/:id", async (req, res) => {
   const jokeExist = await jokeExistsById(id);
 
   if (!jokeExist) {
-    res.status(404).send("Joke doesn't exist");
+    res.status(404).send({ error: "Joke doesn't exist" });
   }
 
   try {
@@ -70,7 +70,7 @@ jokeRouter.put("/api/joke/:id", async (req, res) => {
 
     res.status(204).json(joke);
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).send({ error: err.message });
   }
 });
 

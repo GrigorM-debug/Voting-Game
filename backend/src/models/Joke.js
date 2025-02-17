@@ -5,7 +5,11 @@ const jokeSchema = new Schema({
   question: String,
   answer: String,
   votes: [{ value: Number, label: String }],
-  availableVotes: [String],
+  availableVotes: {
+    type: [String],
+    default: ["😂", "👍", "❤️"],
+    enum: ["😂", "👍", "❤️"],
+  },
 });
 
 const Joke = model("Joke", jokeSchema);
