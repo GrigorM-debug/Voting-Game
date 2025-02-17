@@ -2,8 +2,14 @@ import { SchemaTypes, model, Schema } from "mongoose";
 
 const jokeSchema = new Schema({
   _id: SchemaTypes.ObjectId,
-  question: String,
-  answer: String,
+  question: {
+    type: String,
+    require: true,
+  },
+  answer: {
+    type: String,
+    require: true,
+  },
   votes: [{ value: Number, label: String }],
   availableVotes: {
     type: [String],
