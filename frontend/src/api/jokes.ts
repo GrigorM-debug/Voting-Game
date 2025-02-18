@@ -1,8 +1,5 @@
 import { Joke } from "../types/Joke";
 const BASE_URL = import.meta.env.VITE_BASE_API_URL;
-import { useNavigate } from "react-router-dom";
-
-const navigate = useNavigate();
 
 export async function fetchJoke(): Promise<Joke> {
   const response = await fetch(`${BASE_URL}`);
@@ -29,16 +26,25 @@ export async function voteForJoke(
   });
 
   if (!response.ok) {
-    if (response.status === 404) {
-      navigate("/404");
-    }
-
     const errorData = await response.json();
 
     throw new Error(errorData.error || "Something went wrong");
   }
 
   const data = await response.json();
+  console.log(data);
 
   return data;
+}
+
+export async function deleteJoke(jokeId: string) {
+  const response = await fetch(`${BASE_URL}/${jokeId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+
+    throw new Error(errorData.error || "Something went wrong");
+  }
 }

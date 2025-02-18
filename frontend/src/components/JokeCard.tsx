@@ -1,8 +1,8 @@
 import { Joke } from "../types/Joke";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { voteForJoke } from "../api/jokes";
+import { deleteJoke, voteForJoke } from "../api/jokes";
 import { useState } from "react";
-import ErrorMessage from "./Error";
+import { useNavigate } from "react-router-dom";
 
 type JokeCardProps = {
   joke: Joke;
@@ -12,7 +12,9 @@ type JokeCardProps = {
 export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
   const [mutationError, setMutationError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
+  //Vote for joke
   const { mutateAsync: voteForJokeMutation } = useMutation<
     Joke,
     Error,
@@ -37,6 +39,7 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
       });
     } catch (err) {
       if (err instanceof Error) {
+        console.log(err);
         setMutationError(err.message);
       } else {
         setMutationError("Unexpected error");
@@ -44,8 +47,41 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
     }
   };
 
+  //Delete Joke
+  const { mutateAsync: deleteJokeMutation } = useMutation<
+    void,
+    Error,
+    { jokeId: string }
+  >({
+    mutationFn: ({ jokeId }) => deleteJoke(jokeId),
+    onError: (error) => {
+      setMutationError(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["joke"] });
+      setMutationError(null);
+    },
+  });
+
+  const handleDeleteButtonClick = async (jokeId: string) => {
+    try {
+      console.log(jokeId);
+      await deleteJokeMutation({ jokeId });
+    } catch (err) {
+      if (err instanceof Error) {
+        setMutationError(err.message);
+      } else {
+        setMutationError("Unexpected Error");
+      }
+    }
+  };
+
+  const handleEditButtonClick = () => {
+    navigate(`joke/edit/${joke._id}`);
+  };
+
   if (mutationError) {
-    <ErrorMessage message={mutationError} />;
+    return <div className="error-message">Error: {mutationError}</div>;
   }
 
   return (
@@ -70,12 +106,14 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
       </div>
       <div className="flex justify-center space-x-4">
         <button
+          onClick={() => handleEditButtonClick()}
           type="button"
           className="text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-full text-sm px-5 py-2.5"
         >
           Edit Joke
         </button>
         <button
+          onClick={() => handleDeleteButtonClick(joke._id)}
           type="button"
           className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5"
         >
