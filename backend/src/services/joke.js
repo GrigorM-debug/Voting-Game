@@ -61,6 +61,14 @@ export async function deleteJoke(id) {
   await Joke.findByIdAndDelete(id);
 }
 
+export async function getJokeById(id) {
+  const joke = await Joke.findById(id);
+
+  console.log(joke);
+
+  return joke;
+}
+
 export async function updateJoke(id, question, answer) {
   if (!question) {
     throw new Error("Question is required");

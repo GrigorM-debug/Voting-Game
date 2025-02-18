@@ -5,6 +5,7 @@ import {
   jokeExistsById,
   deleteJoke,
   updateJoke,
+  getJokeById,
 } from "../services/joke.js";
 
 const jokeRouter = Router();
@@ -49,6 +50,25 @@ jokeRouter.delete("/api/joke/:id", async (req, res) => {
   try {
     await deleteJoke(id);
     res.status(204).end();
+  } catch (err) {
+    res.status(400).send({ error: err.message });
+  }
+});
+
+//Get Joke by Id
+jokeRouter.get("/api/joke/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const jokeExists = await jokeExistsById(id);
+
+  if (!jokeExists) {
+    return res.status(404).send({ error: "Joke doesn't exist" });
+  }
+
+  try {
+    const joke = await getJokeById(id);
+
+    res.status(200).json(joke);
   } catch (err) {
     res.status(400).send({ error: err.message });
   }
