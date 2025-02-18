@@ -24,11 +24,11 @@ jokeRouter.post("/api/joke/:id", async (req, res) => {
   const jokeExist = await jokeExistsById(id);
 
   if (!jokeExist) {
-    res.status(404).send({ error: "Joke doesn't exist" });
+    return res.status(404).send({ error: "Joke doesn't exist" });
   }
 
   try {
-    await voteForJoke(id, emoji);
+    const joke = await voteForJoke(id, emoji);
 
     res.status(201).json(joke);
   } catch (err) {

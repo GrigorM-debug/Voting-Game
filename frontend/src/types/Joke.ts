@@ -1,6 +1,6 @@
 type Vote = {
   value: number;
-  lable: string;
+  label: string;
 };
 
 export type Joke = {

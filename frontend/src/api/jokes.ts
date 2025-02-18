@@ -12,3 +12,24 @@ export async function fetchJoke(): Promise<Joke> {
 
   return data;
 }
+
+export async function voteForJoke(
+  jokeId: string,
+  emoji: "😂" | "👍" | "❤️"
+): Promise<Joke> {
+  const response = await fetch(`${BASE_URL}/${jokeId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ emoji }),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+
+    throw new Error(data.error || "Something went wrong");
+  }
+
+  return response.json();
+}

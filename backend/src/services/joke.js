@@ -26,7 +26,7 @@ export async function voteForJoke(id, emoji) {
   const isEmojiAvaiable = joke.availableVotes.find((av) => av === emoji);
 
   if (!isEmojiAvaiable) {
-    throw new Error("Emoji is not avaiable");
+    throw new Error("Emoji is not available");
   }
 
   const vote = joke.votes.find((v) => v.label === emoji);
@@ -43,6 +43,8 @@ export async function voteForJoke(id, emoji) {
   }
 
   await joke.save();
+
+  return joke;
 }
 
 export async function deleteJoke(id) {
