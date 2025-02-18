@@ -2,6 +2,7 @@ import JokeCard from "./JokeCard";
 import { fetchJoke } from "../api/jokes";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { Joke } from "../types/Joke";
+import ErrorMessage from "./Error";
 
 export default function Home() {
   const {
@@ -18,8 +19,8 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  if (error instanceof Error) {
-    return <div>Error: {error.message}</div>;
+  if (error) {
+    <ErrorMessage message={error.message} />;
   }
 
   return (

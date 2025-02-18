@@ -1,6 +1,8 @@
 import { Joke } from "../types/Joke";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { voteForJoke } from "../api/jokes";
+import { useState } from "react";
+import ErrorMessage from "./Error";
 
 type JokeCardProps = {
   joke: Joke;
@@ -8,6 +10,7 @@ type JokeCardProps = {
 };
 
 export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
+  const [mutationError, setMutationError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { mutateAsync: voteForJokeMutation } = useMutation<
@@ -16,22 +19,34 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
     { jokeId: string; emoji: "😂" | "👍" | "❤️" }
   >({
     mutationFn: ({ jokeId, emoji }) => voteForJoke(jokeId, emoji),
+    onError: (error) => {
+      setMutationError(error.message);
+    },
     onSuccess: (jokeUpdated) => {
-      //   queryClient.invalidateQueries({ queryKey: ["joke"] });
+      //   queryClient.invalidateQueries({ queryKey: ["joke"] }); // this also work but it load the next joke
       queryClient.setQueryData(["joke"], jokeUpdated);
+      setMutationError(null);
     },
   });
 
-  const handleVote = async (emoji: "😂" | "👍" | "❤️") => {
+  const handleVoteButtonClick = async (emoji: "😂" | "👍" | "❤️") => {
     try {
       await voteForJokeMutation({
         jokeId: joke._id,
         emoji,
       });
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      if (err instanceof Error) {
+        setMutationError(err.message);
+      } else {
+        setMutationError("Unexpected error");
+      }
     }
   };
+
+  if (mutationError) {
+    <ErrorMessage message={mutationError} />;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg text-center">
@@ -45,7 +60,7 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
           return (
             <button
               key={emoji}
-              onClick={() => handleVote(emoji)}
+              onClick={() => handleVoteButtonClick(emoji)}
               className="text-2xl mt-8 mb-6"
             >
               {emoji} {voteCount}
