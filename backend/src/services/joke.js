@@ -16,6 +16,16 @@ export async function jokeExistsById(id) {
   return true;
 }
 
+export async function jokeExistByQuestionAndAnswer(question, answer) {
+  const joke = await Joke.findOne({ question, answer });
+
+  if (joke) {
+    return true;
+  }
+
+  return false;
+}
+
 export async function voteForJoke(id, emoji) {
   if (!emoji) {
     throw new Error("Emoji is required for voting");

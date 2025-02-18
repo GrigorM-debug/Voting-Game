@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Joke from "../models/Joke.js";
+import { jokeExistByQuestionAndAnswer } from "./joke.js";
 
 export default async function seedJokes() {
   try {
@@ -11,6 +13,18 @@ export default async function seedJokes() {
       const response = await fetch(jokesApiUrl);
       const data = await response.json();
 
+      //Check if the joke is seeded
+      const jokeExist = await jokeExistByQuestionAndAnswer(
+        data.question,
+        data.answer
+      );
+
+      if (jokeExist) {
+        console.log(
+          `Joke with id: ${data.id}, question: ${data.question}, answer: ${data.answer} Already exist`
+        );
+        continue;
+      }
       jokes.push({
         question: data.question,
         answer: data.answer,
