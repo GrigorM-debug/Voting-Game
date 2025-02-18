@@ -64,8 +64,6 @@ export async function deleteJoke(id) {
 export async function getJokeById(id) {
   const joke = await Joke.findById(id);
 
-  console.log(joke);
-
   return joke;
 }
 

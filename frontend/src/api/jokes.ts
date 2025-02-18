@@ -1,4 +1,5 @@
 import { Joke } from "../types/Joke";
+import { EditJokeForm } from "../types/EditJokeForm";
 const BASE_URL = import.meta.env.VITE_BASE_API_URL;
 
 export async function fetchJoke(): Promise<Joke> {
@@ -54,6 +55,29 @@ export async function getJokeById(jokeId: string): Promise<Joke> {
 
   if (!response.ok) {
     const errorData = await response.json();
+    throw new Error(errorData.message || "Something went wrong");
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function updateJoke(
+  id: string,
+  updatedJokeData: EditJokeForm
+): Promise<Joke> {
+  const response = await fetch(`${BASE_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedJokeData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+
     throw new Error(errorData.message || "Something went wrong");
   }
 
