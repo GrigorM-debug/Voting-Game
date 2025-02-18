@@ -48,3 +48,16 @@ export async function deleteJoke(jokeId: string) {
     throw new Error(errorData.error || "Something went wrong");
   }
 }
+
+export async function getJokeById(jokeId: string): Promise<Joke> {
+  const response = await fetch(`${BASE_URL}/${jokeId}`);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Something went wrong");
+  }
+
+  const data = await response.json();
+
+  return data;
+}
