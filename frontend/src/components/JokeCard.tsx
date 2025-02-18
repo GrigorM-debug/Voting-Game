@@ -1,13 +1,9 @@
 import { Joke } from "../types/Joke";
+import { JokeCardProps } from "../types/JokeCardProps";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteJoke, voteForJoke } from "../api/jokes";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-type JokeCardProps = {
-  joke: Joke;
-  refetchJoke: () => void;
-};
 
 export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
   const [mutationError, setMutationError] = useState<string | null>(null);
