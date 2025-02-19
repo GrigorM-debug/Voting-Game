@@ -27,7 +27,7 @@ export default function EditForm() {
   }
 
   return (
-    <form className="max-w-sm mx-auto" onSubmit={handleFormSubmit}>
+    <form className="max-w-lg mx-auto" onSubmit={handleFormSubmit}>
       <div className="mb-5">
         <label
           htmlFor="question"

@@ -30,7 +30,11 @@ export function useEditJoke() {
     answer: joke?.answer || "",
   });
 
-  if (joke && formData.question === "" && formData.answer === "") {
+  if (
+    joke &&
+    formData.question.trim() === "" &&
+    formData.answer.trim() === ""
+  ) {
     setFormData({ question: joke.question, answer: joke.answer });
   }
 
