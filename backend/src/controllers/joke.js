@@ -88,7 +88,7 @@ jokeRouter.put("/api/joke/:id", async (req, res) => {
   try {
     const joke = await updateJoke(id, question, answer);
 
-    res.status(204).json(joke);
+    res.status(200).json(joke);
   } catch (err) {
     res.status(400).send({ error: err.message });
   }
