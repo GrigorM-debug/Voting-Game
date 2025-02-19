@@ -1,24 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { EditJokeForm } from "../types/EditJokeForm";
-import { Joke } from "../types/Joke";
-import { getJokeById, updateJoke } from "../api/jokes";
+import { useEditJoke } from "../hooks/useEditJoke";
 
 export default function EditForm() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const [mutationError, setMutationError] = useState<string | null>(null);
-
   const {
-    data: joke,
     isLoading,
     error,
-  } = useQuery<Joke>({
-    queryFn: () => getJokeById(id!),
-    queryKey: ["joke", id],
-  });
+    errors,
+    mutationError,
+    formData,
+    handleChange,
+    handleFormSubmit,
+    navigate,
+  } = useEditJoke();
+
+  console.log(formData);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -31,77 +25,6 @@ export default function EditForm() {
   if (mutationError) {
     return <div className="error-message">Error: {mutationError}</div>;
   }
-
-  const [formData, setFormData] = useState<EditJokeForm>({
-    question: joke?.question || "",
-    answer: joke?.answer || "",
-  });
-
-  const [errors, setErrors] = useState({
-    questionError: "",
-    answerError: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const { mutateAsync: updateJokeMutation } = useMutation<
-    Joke,
-    Error,
-    { id: string; formData: EditJokeForm }
-  >({
-    mutationFn: ({ id, formData }) => updateJoke(id, formData),
-    onError: (error) => {
-      setMutationError(error.message);
-    },
-    onSuccess: (jokeUpdated) => {
-      queryClient.setQueryData(["joke"], jokeUpdated);
-      setMutationError(null);
-    },
-  });
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    let hasError = false;
-
-    const newErrors = {
-      questionError: "",
-      answerError: "",
-    };
-
-    if (!formData.question || formData.question.trim() === "") {
-      newErrors.questionError = "Question is required";
-      hasError = true;
-    }
-
-    if (!formData.answer || formData.answer.trim() === "") {
-      newErrors.answerError = "Answer is required";
-      hasError = true;
-    }
-
-    if (hasError) {
-      setErrors(newErrors);
-      return;
-    }
-
-    try {
-      await updateJokeMutation({ id: id!, formData });
-      navigate("/");
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log(err);
-        setMutationError(err.message);
-      } else {
-        setMutationError("Unexpected error");
-      }
-    }
-  };
 
   return (
     <form className="max-w-sm mx-auto" onSubmit={handleFormSubmit}>

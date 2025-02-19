@@ -38,7 +38,7 @@ export async function voteForJoke(
   return data;
 }
 
-export async function deleteJoke(jokeId: string) {
+export async function deleteJoke(jokeId: string): Promise<void> {
   const response = await fetch(`${BASE_URL}/${jokeId}`, {
     method: "DELETE",
   });
@@ -82,6 +82,7 @@ export async function updateJoke(
   }
 
   const data = await response.json();
+  console.log(data);
 
   return data;
 }
