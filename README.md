@@ -33,14 +33,13 @@ A simple full-stack web application built with **React**, **TypeScript**, and **
 
 ## 📡 API Endpoints
 
-### Joke API
-
-| Method | Endpoint | Description |
-| GET | /api/joke | Fetch radom joke |
-| POST | /api/joke/:id | Vote for joke |
+| Method | Endpoint      | Description       |
+| ------ | ------------- | ----------------- |
+| GET    | /api/joke     | Fetch radom joke  |
+| POST   | /api/joke/:id | Vote for joke     |
 | DELETE | /api/joke/:id | Delete Joke by Id |
-| GET | /api/joke/:id | Get Joke by Id |
-| PUT | /api/joke/:id | Update joke by id |
+| GET    | /api/joke/:id | Get Joke by Id    |
+| PUT    | /api/joke/:id | Update joke by id |
 
 ## 📦 Install Dependencies
 
