@@ -1,83 +1,30 @@
-import { Joke } from "../types/Joke";
 import { JokeCardProps } from "../types/JokeCardProps";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteJoke, voteForJoke } from "../api/jokes";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useVoteForJoke } from "../hooks/useVoteForJoke";
+import { useDeleteJoke } from "../hooks/useDeleteJoke";
+
 export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
-  const [mutationError, setMutationError] = useState<string | null>(null);
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  //Vote for joke
-  const { mutateAsync: voteForJokeMutation } = useMutation<
-    Joke,
-    Error,
-    { jokeId: string; emoji: "😂" | "👍" | "❤️" }
-  >({
-    mutationFn: ({ jokeId, emoji }) => voteForJoke(jokeId, emoji),
-    onError: (error) => {
-      setMutationError(error.message);
-    },
-    onSuccess: (jokeUpdated) => {
-      //   queryClient.invalidateQueries({ queryKey: ["joke"] }); // this also work but it load the next joke
-      queryClient.setQueryData(["joke"], jokeUpdated);
-      setMutationError(null);
-    },
-  });
+  const { voteForJokeMutationError, handleVoteButtonClick } = useVoteForJoke();
 
-  const handleVoteButtonClick = async (emoji: "😂" | "👍" | "❤️") => {
-    try {
-      await voteForJokeMutation({
-        jokeId: joke._id,
-        emoji,
-      });
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log(err);
-        setMutationError(err.message);
-      } else {
-        setMutationError("Unexpected error");
-      }
-    }
-  };
-
-  //Delete Joke
-  const { mutateAsync: deleteJokeMutation } = useMutation<
-    void,
-    Error,
-    { jokeId: string }
-  >({
-    mutationFn: ({ jokeId }) => deleteJoke(jokeId),
-    onError: (error) => {
-      setMutationError(error.message);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["joke"] });
-      setMutationError(null);
-    },
-  });
-
-  const handleDeleteButtonClick = async (jokeId: string) => {
-    try {
-      console.log(jokeId);
-      await deleteJokeMutation({ jokeId });
-    } catch (err) {
-      if (err instanceof Error) {
-        setMutationError(err.message);
-      } else {
-        setMutationError("Unexpected Error");
-      }
-    }
-  };
+  const { deleteJokeMutationError, handleDeleteButtonClick } = useDeleteJoke();
 
   const handleEditButtonClick = () => {
     navigate(`joke/edit/${joke._id}`);
   };
 
-  if (mutationError) {
-    return <div className="error-message">Error: {mutationError}</div>;
+  if (voteForJokeMutationError) {
+    return (
+      <div className="error-message">Error: {voteForJokeMutationError}</div>
+    );
+  }
+
+  if (deleteJokeMutationError) {
+    return (
+      <div className="error-message">Error: {deleteJokeMutationError}</div>
+    );
   }
 
   return (
@@ -92,7 +39,7 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
           return (
             <button
               key={emoji}
-              onClick={() => handleVoteButtonClick(emoji)}
+              onClick={() => handleVoteButtonClick(emoji, joke._id)}
               className="text-2xl mt-8 mb-6 border-2 border-[#242424] hover:border-cyan-600"
             >
               {emoji} {voteCount}
