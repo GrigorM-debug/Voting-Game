@@ -44,7 +44,7 @@ jokeRouter.delete("/api/joke/:id", async (req, res) => {
   const jokeExist = await jokeExistsById(id);
 
   if (!jokeExist) {
-    res.status("404").send({ error: "Joke doesn't exist" });
+    res.status(404).send({ error: "Joke doesn't exist" });
   }
 
   try {
