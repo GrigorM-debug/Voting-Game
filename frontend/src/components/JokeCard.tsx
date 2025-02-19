@@ -58,7 +58,7 @@ export default function JokeCard({ joke, refetchJoke }: JokeCardProps) {
         <button
           onClick={() => handleDeleteButtonClick(joke._id)}
           type="button"
-          className="font-bold text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-full px-5 py-2.5"
+          className="font-bold text-white bg-red-600 hover:bg-red-900 focus:ring-4 focus:ring-red-300 font-medium rounded-full px-5 py-2.5"
         >
           Delete Joke
         </button>
